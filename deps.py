@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import math
 import os.path
 import cairo
 import rsvg
@@ -29,7 +30,18 @@ def add_labels(ctx, nodes, size):
         ctx.set_source_rgb(0, 0, 1)
         ctx.set_font_size(square_size)
         ctx.move_to(0, (x + 1) * square_size);
-        ctx.show_text(node_x)
+        ctx.show_text(node_x.replace('"', ''))
+    ctx.save()
+    ctx.translate(0.5, 0.5)
+    ctx.rotate(math.pi / 2)
+    ctx.translate(-0.5, -0.5)
+    for x, node_x in enumerate(reversed(nodes)):
+        if x < (len(nodes) - 11):
+            ctx.set_source_rgb(0, 0, 1)
+            ctx.set_font_size(square_size)
+            ctx.move_to(0, (x + 1) * square_size);
+            ctx.show_text(node_x.replace('"', ''))
+    ctx.restore()
 
 
 def store_graph(nodes, edges, filename):
