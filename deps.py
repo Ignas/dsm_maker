@@ -80,31 +80,11 @@ def load_graph(filename):
     return edges, nodes
 
 
-def density(group, edges):
-    connections = 0.
-    for i in group:
-        for j in group:
-            if (i, j) in edges:
-                connections += 1
-    return connections / (len(group) ** 2)
-
-
-def weakest(group, edges):
-    scores = collections.defaultdict(int)
-    for i in group:
-        scores[i] += 1
-        for j in group:
-            if (i, j) in edges:
-                scores[i] += 1
-                scores[j] += 1
-    return sorted(scores.items(), key=lambda i: i[1])[0][0]
-
-
 def count_dependencies(node, edges):
     return len([node for edge in edges if edge[1] == node])
 
 
-def cluster(nodes, edges):
+def recursive_cluster(nodes, edges):
     if not nodes:
         return nodes, edges
     nodes = sorted(nodes, key=lambda n:count_dependencies(n, edges), reverse=True)
@@ -116,7 +96,7 @@ def cluster(nodes, edges):
             my_nodes.append(node)
         else:
             other_nodes.append(node)
-    nodes = [nodes[0]] + cluster(my_nodes, edges)[0] + cluster(other_nodes, edges)[0]
+    nodes = [nodes[0]] + recursive_cluster(my_nodes, edges)[0] + recursive_cluster(other_nodes, edges)[0]
     return nodes, edges
 
 
@@ -128,7 +108,7 @@ def main(in_filename, out_filename):
             cPickle.dump((edges, nodes), cache)
     with open(cache_filename) as cache:
         (edges, nodes) = cPickle.load(cache)
-    nodes, edges = cluster(nodes, edges)
+    nodes, edges = recursive_cluster(nodes, edges)
     store_graph(list(nodes), edges, out_filename)
 
 
