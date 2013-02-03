@@ -108,7 +108,8 @@ def cluster(nodes, edges):
     return nodes, edges
 
 
-def main(in_filename, out_filename, cache_filename):
+def main(in_filename, out_filename):
+    cache_filename = in_filename + ".pickle"
     if not os.path.exists(cache_filename):
         edges, nodes = load_graph(in_filename)
         with open(cache_filename, "w") as cache:
@@ -120,4 +121,4 @@ def main(in_filename, out_filename, cache_filename):
 
 
 if __name__ == '__main__':
-    main("graph.dot", "result.svg", "cache.pickle")
+    main("graph.dot", "result.svg")
