@@ -99,6 +99,19 @@ def recursive_cluster(nodes, edges):
     nodes = [nodes[0]] + recursive_cluster(my_nodes, edges)[0] + recursive_cluster(other_nodes, edges)[0]
     return nodes, edges
 
+def format_node(node):
+    node = node.replace('"', '').replace(' ', '')
+    n = 0
+    return "%d {%s}" % (n, node)
+
+def export_dt(noded, edges, out_filename):
+    lines = []
+    for node in nodes:
+        lines.append(format_node(node))
+    for edge in edges:
+        lines.append(format_node(edge[0]) + ":" + format_node(edge[1]))
+    lines.append("")
+    return "\n".join(lines)
 
 def main(in_filename, out_filename):
     cache_filename = in_filename + ".pickle"
@@ -109,6 +122,7 @@ def main(in_filename, out_filename):
     with open(cache_filename) as cache:
         (edges, nodes) = cPickle.load(cache)
     nodes, edges = recursive_cluster(nodes, edges)
+    export_dt(nodes, edges, in_filename + ".dt")
     store_graph(list(nodes), edges, out_filename)
 
 
