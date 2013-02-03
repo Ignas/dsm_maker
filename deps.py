@@ -23,6 +23,15 @@ def draw_grid(ctx, elements):
     ctx.stroke()
 
 
+def add_labels(ctx, nodes, size):
+    square_size = 1./size
+    for x, node_x in enumerate(nodes):
+        ctx.set_source_rgb(0, 0, 1)
+        ctx.set_font_size(square_size)
+        ctx.move_to(0, (x + 1) * square_size);
+        ctx.show_text(node_x)
+
+
 def store_graph(nodes, edges, filename):
     fo = file(filename, 'w')
     WIDTH, HEIGHT  = 1200, 1200
@@ -35,12 +44,12 @@ def store_graph(nodes, edges, filename):
     square_size = 1./size
     for x, node_x in enumerate(nodes):
         for y, node_y in enumerate(nodes):
-            if (node_x, node_y) in edges:
+            if (node_y, node_x) in edges:
                 ctx.rectangle(x * square_size, y * square_size,
                               square_size, square_size)
                 ctx.set_source_rgb(0, 0, 0)
                 ctx.fill()
-
+    add_labels(ctx, nodes, size)
     surface.finish()
 
 
@@ -57,6 +66,7 @@ def load_graph(filename):
     # for node in graph.get_nodes():
     #     nodes.add(node.get_name())
     return edges, nodes
+
 
 def density(group, edges):
     connections = 0.
