@@ -87,6 +87,7 @@ def weakest(group, edges):
                 scores[j] += 1
     return sorted(scores.items(), key=lambda i: i[1])[0][0]
 
+
 def count_dependencies(node, edges):
     return len([node for edge in edges if edge[1] == node])
 
@@ -106,6 +107,7 @@ def cluster(nodes, edges):
     nodes = [nodes[0]] + cluster(my_nodes, edges)[0] + cluster(other_nodes, edges)[0]
     return nodes, edges
 
+
 def main(in_filename, out_filename, cache_filename):
     if not os.path.exists(cache_filename):
         edges, nodes = load_graph(in_filename)
@@ -115,6 +117,7 @@ def main(in_filename, out_filename, cache_filename):
         (edges, nodes) = cPickle.load(cache)
     nodes, edges = cluster(nodes, edges)
     store_graph(list(nodes), edges, out_filename)
+
 
 if __name__ == '__main__':
     main("graph.dot", "result.svg", "cache.pickle")
