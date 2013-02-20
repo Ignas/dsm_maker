@@ -1,8 +1,8 @@
 import svgwrite
-import base_drawer
+from .base_drawer import BaseDrawer
 
 
-class GraphDrawer(base_drawer.BaseDrawer):
+class GraphDrawer(BaseDrawer):
 
     def init(self):
         self.square_size = max(2, min(500 / self.size, 10))
@@ -17,7 +17,6 @@ class GraphDrawer(base_drawer.BaseDrawer):
                                    size=(self.width, self.height),
                                    fill='white')
         self.dwg.add(background)
-        print self.title
         self.dwg.set_desc(self.title)
 
     def draw_grid(self):
