@@ -10,3 +10,9 @@ Usage:
 Dependencies:
 
   pip install -r requirements.pip
+
+Examples:
+
+  http://pow.lt/dsm_packed_once.svg
+  http://pow.lt/dsm_packed_twice.svg
+  http://pow.lt/dsm_with_labels.svg
