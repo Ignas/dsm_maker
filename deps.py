@@ -104,7 +104,7 @@ def format_node(node):
     n = 0
     return "%d {%s}" % (n, node)
 
-def export_dt(noded, edges, out_filename):
+def export_dt(nodes, edges, out_filename):
     lines = []
     for node in nodes:
         lines.append(format_node(node))
