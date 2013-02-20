@@ -2,7 +2,6 @@
 import sys
 import os.path
 import pydot
-# import cairo_drawer as drawer
 import svg_drawer as drawer
 import cPickle
 from collections import defaultdict
