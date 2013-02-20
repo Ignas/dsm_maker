@@ -3,66 +3,82 @@ import sys
 import math
 import os.path
 import cairo
-import rsvg
-import math
 import pydot
 import cPickle
-import collections
 
 
-def draw_grid(ctx, elements):
-    square_size = 1./elements
-    for n in range(elements):
-        ctx.move_to(n * square_size, 0)
-        ctx.line_to(n * square_size, 1)
+class GraphDrawer(object):
 
-        ctx.move_to(0, n * square_size)
-        ctx.line_to(1, n * square_size)
+    def __init__(self, filename, nodes, edges):
+        self.filename = filename
+        self.edges = edges
+        self.nodes = nodes
+        self.size = len(nodes)
+        self.square_size = 1./self.size
+        fo = file(filename, 'w')
+        WIDTH, HEIGHT  = 1200, 1200
+        self.surface = cairo.SVGSurface(fo, WIDTH, HEIGHT)
+        self.ctx = cairo.Context(self.surface)
+        self.ctx.scale(WIDTH/1.0, HEIGHT/1.0) # Normalizing the canvas
 
-    ctx.set_source_rgb(0.3, 0.3, 0.3)
-    ctx.set_line_width(0.0001)
-    ctx.stroke()
+    def draw_grid(self):
+        for n in range(self.size):
+            self.ctx.move_to(n * self.square_size, 0)
+            self.ctx.line_to(n * self.square_size, 1)
 
+            self.ctx.move_to(0, n * self.square_size)
+            self.ctx.line_to(1, n * self.square_size)
 
-def add_labels(ctx, nodes, size):
-    square_size = 1./size
-    for x, node_x in enumerate(nodes):
-        ctx.set_source_rgb(0, 0, 1)
-        ctx.set_font_size(square_size)
-        ctx.move_to(0, (x + 1) * square_size);
-        ctx.show_text(node_x.replace('"', ''))
-    ctx.save()
-    ctx.translate(0.5, 0.5)
-    ctx.rotate(math.pi / 2)
-    ctx.translate(-0.5, -0.5)
-    for x, node_x in enumerate(reversed(nodes)):
-        if x < (len(nodes) - 11):
-            ctx.set_source_rgb(0, 0, 1)
-            ctx.set_font_size(square_size)
-            ctx.move_to(0, (x + 1) * square_size);
-            ctx.show_text(node_x.replace('"', ''))
-    ctx.restore()
+        self.ctx.set_source_rgb(0.3, 0.3, 0.3)
+        self.ctx.set_line_width(0.0001)
+        self.ctx.stroke()
+
+    def draw_square(self, x, node_x, y, node_y):
+        self.ctx.rectangle(x * self.square_size, y * self.square_size,
+                           self.square_size, self.square_size)
+        self.ctx.set_source_rgb(0, 0, 0)
+        self.ctx.fill()
+
+    def draw_squares(self):
+        for x, node_x in enumerate(self.nodes):
+            for y, node_y in enumerate(self.nodes):
+                if (node_y, node_x) in self.edges:
+                    self.draw_square(x, node_x, y, node_y)
+
+    def add_vertical_labels(self):
+        for x, node_x in enumerate(self.nodes):
+            self.ctx.set_source_rgb(0, 0, 1)
+            self.ctx.set_font_size(self.square_size)
+            self.ctx.move_to(0, (x + 1) * self.square_size)
+            self.ctx.show_text(node_x.replace('"', ''))
+
+    def add_horizontal_labels(self):
+        self.ctx.save()
+        self.ctx.translate(0.5, 0.5)
+        self.ctx.rotate(math.pi / 2)
+        self.ctx.translate(-0.5, -0.5)
+        for x, node_x in enumerate(reversed(self.nodes)):
+            if x < (len(self.nodes) - 11):
+                self.ctx.set_source_rgb(0, 0, 1)
+                self.ctx.set_font_size(self.square_size)
+                self.ctx.move_to(0, (x + 1) * self.square_size)
+                self.ctx.show_text(node_x.replace('"', ''))
+        self.ctx.restore()
+
+    def add_labels(self):
+        self.add_vertical_labels()
+        self.add_horizontal_labels()
+
+    def close(self):
+        self.surface.finish()
 
 
 def store_graph(nodes, edges, filename):
-    fo = file(filename, 'w')
-    WIDTH, HEIGHT  = 1200, 1200
-    surface = cairo.SVGSurface(fo, WIDTH, HEIGHT)
-    ctx = cairo.Context(surface)
-    ctx.scale(WIDTH/1.0, HEIGHT/1.0) # Normalizing the canvas
-    size = len(nodes)
-    draw_grid(ctx, size)
-
-    square_size = 1./size
-    for x, node_x in enumerate(nodes):
-        for y, node_y in enumerate(nodes):
-            if (node_y, node_x) in edges:
-                ctx.rectangle(x * square_size, y * square_size,
-                              square_size, square_size)
-                ctx.set_source_rgb(0, 0, 0)
-                ctx.fill()
-    add_labels(ctx, nodes, size)
-    surface.finish()
+    gd = GraphDrawer(filename, nodes, edges)
+    gd.draw_grid()
+    gd.draw_squares()
+    gd.add_labels()
+    gd.close()
 
 
 def load_graph(filename):
