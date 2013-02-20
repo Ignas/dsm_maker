@@ -73,7 +73,7 @@ def collect_transient_dependencies(edges):
     for a, b in edges:
         transient_dependency_map[a].add(b)
 
-    for k, v in transient_dependency_map.items():
+    for v in transient_dependency_map.values():
         old_deps = set(v)
         while True:
             for dep in list(v):
