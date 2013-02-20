@@ -13,6 +13,10 @@ class GraphDrawer(base_drawer.BaseDrawer):
         self.dwg = svgwrite.Drawing(self.filename,
                                     (self.width, self.height),
                                     profile="tiny")
+        background = self.dwg.rect(insert=(0, 0),
+                                   size=(self.width, self.height),
+                                   fill='white')
+        self.dwg.add(background)
 
     def draw_grid(self):
         for n in range(self.offset, self.width + 1, self.square_size):
