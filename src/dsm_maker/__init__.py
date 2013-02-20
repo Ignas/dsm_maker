@@ -114,8 +114,8 @@ def main():
     parser.add_argument('-c', '--cache', help='cache file (pickle)')
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--recursive_cluster", action="store_true", default=True)
-    group.add_argument("--triangle_cluster", action="store_true")
+    group.add_argument("--recursive_cluster", action="store_true")
+    group.add_argument("--triangle_cluster", action="store_true", default=True)
 
     parser.add_argument('--pack', help='pack clusters N times', type=int, default=0)
 
