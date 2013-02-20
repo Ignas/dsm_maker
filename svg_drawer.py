@@ -43,9 +43,17 @@ class GraphDrawer(base_drawer.BaseDrawer):
         self.dwg.add(rect)
 
     def draw_square(self, x, node_x, y, node_y):
-        title = "%s -> %s" % (node_y.replace('"', ''),
-                              node_x.replace('"', ''))
-        self._draw_square(x, y, title, fill='black')
+        if (node_x, node_y) not in self.edges:
+            title = "%s -> %s" % (node_y.replace('"', ''),
+                                  node_x.replace('"', ''))
+            self._draw_square(x, y, title, fill='darkblue')
+            title = "%s <- %s" % (node_y.replace('"', ''),
+                                  node_x.replace('"', ''))
+            self._draw_square(y, x, title, fill='darkgreen')
+        else:
+            title = "%s <-> %s" % (node_y.replace('"', ''),
+                                   node_x.replace('"', ''))
+            self._draw_square(x, y, title, fill='red')
 
     def add_vertical_labels(self):
         for y, node_y in enumerate(self.nodes, 1):
