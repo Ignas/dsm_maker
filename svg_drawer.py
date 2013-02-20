@@ -19,7 +19,8 @@ class GraphDrawer(base_drawer.BaseDrawer):
         self.dwg.add(background)
 
     def draw_grid(self):
-        for n in range(self.offset, self.width + 1, self.square_size):
+        for i, n in enumerate(range(self.offset, self.width + 1, self.square_size)):
+            self._draw_square(i, i, None, fill='gray')
             self.dwg.add(self.dwg.line((self.offset, n),
                                        (self.width, n),
                                        stroke_width=self.line_width,
@@ -29,17 +30,21 @@ class GraphDrawer(base_drawer.BaseDrawer):
                                        stroke_width=self.line_width,
                                        stroke=svgwrite.rgb(10, 10, 16, '%')))
 
-    def draw_square(self, x, node_x, y, node_y):
+    def _draw_square(self, x, y, title=None, fill='black'):
         rect = self.dwg.rect(insert=(self.offset + x * self.square_size,
                                      self.offset + y * self.square_size),
                              size=(self.square_size, self.square_size),
-                             fill='black',
+                             fill=fill,
                              stroke=svgwrite.rgb(10, 10, 16, '%'),
                              stroke_width=self.line_width)
+        if title is not None:
+            rect.set_desc(title)
+        self.dwg.add(rect)
+
+    def draw_square(self, x, node_x, y, node_y):
         title = "%s -> %s" % (node_y.replace('"', ''),
                               node_x.replace('"', ''))
-        rect.set_desc(title)
-        self.dwg.add(rect)
+        self._draw_square(x, y, title, fill='black')
 
     def add_vertical_labels(self):
         for y, node_y in enumerate(self.nodes, 1):
