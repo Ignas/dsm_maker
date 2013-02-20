@@ -5,6 +5,7 @@ import pydot
 # import cairo_drawer as drawer
 import svg_drawer as drawer
 import cPickle
+from collections import defaultdict
 
 
 def store_graph(nodes, edges, filename):
@@ -49,6 +50,41 @@ def recursive_cluster(nodes, edges):
     nodes = [nodes[0]] + recursive_cluster(my_nodes, edges)[0] + recursive_cluster(other_nodes, edges)[0]
     return nodes, edges
 
+
+def triangle_cluster(nodes, edges):
+    if not nodes:
+        return nodes, edges
+
+    direct_deps = defaultdict(set)
+    for a, b in edges:
+        direct_deps[a].add(b)
+
+    for k, v in direct_deps.items():
+        old_deps = set(v)
+        while True:
+            for dep in list(v):
+                v.update(direct_deps[dep])
+            if v == old_deps:
+                break
+            old_deps = set(v)
+
+    items = sorted(nodes, key=lambda n:count_dependencies(n, edges), reverse=True)
+    grouped_items = []
+    taken_items = set()
+    old_items = list(items)
+    while True:
+        for k in list(items):
+            if taken_items.issuperset(direct_deps[k]):
+                grouped_items.append(k)
+                taken_items.add(k)
+                items.remove(k)
+        if old_items == items:
+            break
+        old_items = list(items)
+    nodes = grouped_items + list(items)
+    return nodes, edges
+
+
 def format_node(node):
     node = node.replace('"', '').replace(' ', '')
     n = 0
@@ -71,7 +107,8 @@ def main(in_filename, out_filename):
             cPickle.dump((edges, nodes), cache)
     with open(cache_filename) as cache:
         (edges, nodes) = cPickle.load(cache)
-    nodes, edges = recursive_cluster(nodes, edges)
+    #nodes, edges = recursive_cluster(nodes, edges)
+    nodes, edges = triangle_cluster(nodes, edges)
     export_dt(nodes, edges, in_filename + ".dt")
     store_graph(list(nodes), edges, out_filename)
 
