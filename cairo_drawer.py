@@ -1,15 +1,8 @@
 import cairo
 import math
+import base_drawer
 
-class GraphDrawer(object):
-
-    def __init__(self, filename, nodes, edges):
-        self.filename = filename
-        self.edges = edges
-        self.nodes = nodes
-        self.size = len(nodes)
-        self.square_size = 1./self.size
-        self.init()
+class GraphDrawer(base_drawer.BaseDrawer):
 
     def init(self):
         fo = file(self.filename, 'w')
@@ -36,12 +29,6 @@ class GraphDrawer(object):
         self.ctx.set_source_rgb(0, 0, 0)
         self.ctx.fill()
 
-    def draw_squares(self):
-        for x, node_x in enumerate(self.nodes):
-            for y, node_y in enumerate(self.nodes):
-                if (node_y, node_x) in self.edges:
-                    self.draw_square(x, node_x, y, node_y)
-
     def add_vertical_labels(self):
         for x, node_x in enumerate(self.nodes):
             self.ctx.set_source_rgb(0, 0, 1)
@@ -61,10 +48,6 @@ class GraphDrawer(object):
                 self.ctx.move_to(0, (x + 1) * self.square_size)
                 self.ctx.show_text(node_x.replace('"', ''))
         self.ctx.restore()
-
-    def add_labels(self):
-        self.add_vertical_labels()
-        self.add_horizontal_labels()
 
     def close(self):
         self.surface.finish()

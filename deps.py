@@ -2,12 +2,13 @@
 import sys
 import os.path
 import pydot
-import cairo_drawer
+# import cairo_drawer as drawer
+import svg_drawer as drawer
 import cPickle
 
 
 def store_graph(nodes, edges, filename):
-    gd = cairo_drawer.GraphDrawer(filename, nodes, edges)
+    gd = drawer.GraphDrawer(filename, nodes, edges)
     gd.draw_grid()
     gd.draw_squares()
     gd.add_labels()
