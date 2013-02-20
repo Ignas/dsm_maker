@@ -51,6 +51,23 @@ def recursive_cluster(nodes, edges):
     return nodes, edges
 
 
+def pack(nodes, edges, deps):
+    size = len(nodes)
+    for packed_node in reversed(nodes):
+        idx = nodes.index(packed_node)
+        for n in range(idx + 1, size):
+            it = nodes[n]
+            its_deps = deps[it]
+            if packed_node in its_deps:
+                nodes.remove(packed_node)
+                nodes.insert(n - 1, packed_node)
+                break
+        else:
+            nodes.remove(packed_node)
+            nodes.append(packed_node)
+    return nodes, edges
+
+
 def triangle_cluster(nodes, edges):
     if not nodes:
         return nodes, edges
@@ -83,6 +100,8 @@ def triangle_cluster(nodes, edges):
         old_items = list(items)
     nodes = grouped_items + list(items)
     return nodes, edges
+    # nodes, edges = pack(nodes, edges, direct_deps)
+    # return pack(nodes, edges, direct_deps)
 
 
 def main(in_filename, out_filename, title):
