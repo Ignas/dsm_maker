@@ -5,7 +5,7 @@ import base_drawer
 class GraphDrawer(base_drawer.BaseDrawer):
 
     def init(self):
-        self.square_size = max(2, 500 / self.size)
+        self.square_size = max(2, min(500 / self.size, 10))
         self.offset = 20 * self.square_size
         self.width = self.size * self.square_size + self.offset
         self.height  = self.size * self.square_size + self.offset
