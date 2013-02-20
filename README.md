@@ -5,14 +5,12 @@ Dot to dsm to svg converter.
 
 Usage:
 
-  python deps.py in_file.dot out_file.svg
+  python deps.py in_file.dot out_file.svg "Graph title"
 
 Dependencies:
 
+  pip install -r requirements.pip
+
+If you want to work with or use cairo svg drawing code:
+
   sudo apt-get install python-rsvg python-pydot
-
-Notes:
-
-  Seems like there is only one loop in the data, so it should be
-possible to sort everything so that all thye connections would be in
-the bottom triangle, I just need to find an algorithm that does it.
