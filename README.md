@@ -5,7 +5,7 @@ Dot to dsm to svg converter.
 
 Usage:
 
-  PYTHONPATH=src python -m dsm_maker in_file.dot out_file.svg "Graph title"
+  `PYTHONPATH=src python -m dsm_maker in_file.dot out_file.svg "Graph title"`
 
 Dependencies:
 
@@ -13,9 +13,9 @@ Dependencies:
 
 Examples:
 
-  http://pow.lt/dsm_packed_once.svg
-  http://pow.lt/dsm_packed_twice.svg
-  http://pow.lt/dsm_with_labels.svg
+  * http://pow.lt/dsm_packed_once.svg
+  * http://pow.lt/dsm_packed_twice.svg
+  * http://pow.lt/dsm_with_labels.svg
 
 TODO:
 
