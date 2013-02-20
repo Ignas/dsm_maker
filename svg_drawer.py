@@ -17,7 +17,8 @@ class GraphDrawer(base_drawer.BaseDrawer):
                                    size=(self.width, self.height),
                                    fill='white')
         self.dwg.add(background)
-        self.dwg.set_desc("DSM")
+        print self.title
+        self.dwg.set_desc(self.title)
 
     def draw_grid(self):
         for i, n in enumerate(range(self.offset, self.width + 1, self.square_size)):

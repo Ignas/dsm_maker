@@ -8,8 +8,8 @@ import cPickle
 from collections import defaultdict
 
 
-def store_graph(nodes, edges, filename):
-    gd = drawer.GraphDrawer(filename, nodes, edges)
+def store_graph(nodes, edges, filename, title):
+    gd = drawer.GraphDrawer(filename, nodes, edges, title)
     gd.draw_grid()
     gd.draw_squares()
     gd.add_labels()
@@ -99,7 +99,8 @@ def export_dt(nodes, edges, out_filename):
     lines.append("")
     return "\n".join(lines)
 
-def main(in_filename, out_filename):
+
+def main(in_filename, out_filename, title):
     cache_filename = in_filename + ".pickle"
     if not os.path.exists(cache_filename):
         edges, nodes = load_graph(in_filename)
@@ -110,7 +111,7 @@ def main(in_filename, out_filename):
     #nodes, edges = recursive_cluster(nodes, edges)
     nodes, edges = triangle_cluster(nodes, edges)
     export_dt(nodes, edges, in_filename + ".dt")
-    store_graph(list(nodes), edges, out_filename)
+    store_graph(list(nodes), edges, out_filename, title)
 
 
 if __name__ == '__main__':
@@ -122,4 +123,9 @@ if __name__ == '__main__':
         out_filename = sys.argv[2]
     else:
         out_filename = "result.svg"
-    main(in_filename, out_filename)
+    if len(sys.argv) > 3:
+        title = sys.argv[3]
+    else:
+        title = "DSM"
+
+    main(in_filename, out_filename, title)

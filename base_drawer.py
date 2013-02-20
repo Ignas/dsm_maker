@@ -2,12 +2,13 @@
 
 class BaseDrawer(object):
 
-    def __init__(self, filename, nodes, edges):
+    def __init__(self, filename, nodes, edges, title="DSM"):
         self.filename = filename
         self.edges = edges
         self.nodes = nodes
         self.size = len(nodes)
         self.square_size = 1./self.size
+        self.title = title
         self.init()
 
     def draw_squares(self):
