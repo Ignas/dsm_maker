@@ -10,7 +10,9 @@ class GraphDrawer(base_drawer.BaseDrawer):
         self.width = self.size * self.square_size + self.offset
         self.height  = self.size * self.square_size + self.offset
         self.line_width = self.square_size / 10.0
-        self.dwg = svgwrite.Drawing(self.filename, height=self.width, width=self.height, profile="tiny")
+        self.dwg = svgwrite.Drawing(self.filename,
+                                    (self.width, self.height),
+                                    profile="tiny")
 
     def draw_grid(self):
         for n in range(self.offset, self.width + 1, self.square_size):
