@@ -21,7 +21,7 @@ class GraphDrawer(base_drawer.BaseDrawer):
 
     def draw_grid(self):
         for i, n in enumerate(range(self.offset, self.width + 1, self.square_size)):
-            self._draw_square(i, i, None, fill='gray')
+            self._draw_square(i, i, self.nodes[i - 1], fill='gray')
             self.dwg.add(self.dwg.line((self.offset, n),
                                        (self.width, n),
                                        stroke_width=self.line_width,
