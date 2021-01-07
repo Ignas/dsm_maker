@@ -10,8 +10,8 @@ from collections import defaultdict
 from . import svg_drawer as drawer
 
 
-def store_graph(nodes, edges, filename, title):
-    gd = drawer.GraphDrawer(filename, nodes, edges, title)
+def store_graph(nodes, edges, filename, title, one_way):
+    gd = drawer.GraphDrawer(filename, nodes, edges, title, one_way)
     gd.draw_grid()
     gd.draw_squares()
     gd.add_labels()
@@ -65,6 +65,7 @@ def count_dependencies(node, edges):
 def recursive_cluster(nodes, edges):
     if not nodes:
         return nodes, edges
+    nodes = sorted(nodes)
     nodes = sorted(nodes, key=lambda n:count_dependencies(n, edges), reverse=True)
     top_node = nodes[0]
     my_nodes = []
@@ -116,6 +117,7 @@ def triangle_cluster(nodes, edges):
         return nodes, edges
 
     transient_deps = collect_transient_dependencies(edges)
+    nodes = sorted(nodes)
     items = sorted(nodes, key=lambda n:count_dependencies(n, edges), reverse=True)
     grouped_items = []
     taken_items = set()
@@ -139,6 +141,7 @@ def main():
     parser.add_argument('-t', '--title', help='graph title. Default: DSM', default='DSM')
     parser.add_argument('-o', '--output', help='output file (svg)')
     parser.add_argument('-c', '--cache', help='cache file (pickle)')
+    parser.add_argument("--one_way", action="store_true", default=False)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--recursive_cluster", action="store_true")
@@ -172,4 +175,4 @@ def main():
     else:
         out_filename = "result.svg"
 
-    store_graph(list(nodes), edges, out_filename, args.title)
+    store_graph(list(nodes), edges, out_filename, args.title, args.one_way)
