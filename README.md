@@ -9,13 +9,23 @@ Usage:
 
 Dependencies:
 
-  pip install -r requirements.pip
+```
+python3 -m venv env
+. env/bin/activate
+pip install -r requirements.txt
+pip install -e .
+```
 
-Examples:
+Ubuntu:
+```
+$ sudo apt-get install libcairo2
+```
 
-  * http://pow.lt/dsm_packed_once.svg
-  * http://pow.lt/dsm_packed_twice.svg
-  * http://pow.lt/dsm_with_labels.svg
+macOS:
+
+```
+brew install cairo
+```
 
 TODO:
 
