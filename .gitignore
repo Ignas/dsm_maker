@@ -3,3 +3,5 @@
 *.pickle
 *.pyc
 python/
+env
+src/dsm_maker.egg-info/

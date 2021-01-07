@@ -2,7 +2,9 @@
 import argparse
 import os.path
 import pydot
-import cPickle
+from simplegexf import Gexf, Edge
+import pickle
+
 from collections import defaultdict
 
 from . import svg_drawer as drawer
@@ -16,8 +18,8 @@ def store_graph(nodes, edges, filename, title):
     gd.close()
 
 
-def load_graph(filename):
-    graph = pydot.dot_parser.parse_dot_data(open(filename).read())
+def load_graph_dot(filename):
+    graph = pydot.dot_parser.parse_dot_data(open(filename).read())[0]
     nodes = set()
     edges = set()
     for edge_obj in graph.get_edges():
@@ -26,10 +28,35 @@ def load_graph(filename):
         nodes.add(edge[1])
         edges.add(edge)
 
-    # for node in graph.get_nodes():
-    #     nodes.add(node.get_name())
     return edges, nodes
 
+
+def load_graph_gexf(filename):
+    from lxml import etree
+    doc = etree.parse(open(filename))
+    ns = {"g": "http://www.gexf.net/1.2draft"}
+    node_map = {}
+    nodes = set()
+    for node in doc.getroot().xpath(
+            "//g:node", namespaces=ns):
+        label = node.attrib['label']
+        id = node.attrib['id']
+        nodes.add(label)
+        node_map[id] = label
+    edges = set()
+    for edge in doc.getroot().xpath(
+            "//g:edge", namespaces=ns):
+        source = node_map[edge.attrib['source']]
+        target = node_map[edge.attrib['target']]
+        edges.add((source, target))
+    return edges, nodes
+
+
+def load_graph(filename):
+    if filename.endswith(".dot"):
+        return load_graph_dot(filename)
+    elif filename.endswith(".gexf"):
+        return load_graph_gexf(filename)
 
 def count_dependencies(node, edges):
     return len([node for edge in edges if edge[1] == node])
@@ -73,7 +100,7 @@ def collect_transient_dependencies(edges):
     for a, b in edges:
         transient_dependency_map[a].add(b)
 
-    for v in transient_dependency_map.values():
+    for v in list(transient_dependency_map.values()):
         old_deps = set(v)
         while True:
             for dep in list(v):
@@ -125,10 +152,10 @@ def main():
         if not os.path.exists(args.cache):
             edges, nodes = load_graph(args.input_file)
             with open(args.cache, "w") as cache:
-                cPickle.dump((edges, nodes), cache)
+                pickle.dump((edges, nodes), cache)
 
         with open(args.cache) as cache:
-            (edges, nodes) = cPickle.load(cache)
+            (edges, nodes) = pickle.load(cache)
     else:
         edges, nodes = load_graph(args.input_file)
 
